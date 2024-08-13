@@ -1,0 +1,122 @@
+schema: '3.0'
+
+stages:
+  prepare_data_v1:
+    cmd: python .\src\data\make_dataset_v1.py .\data\processed\gurgaon_properties.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties.csv
+        hash: md5
+        md5: C3BC062CD8C60CED060EF377F8A72966
+        size: 6823553
+      - path: .\src\data\make_dataset_v1.py
+        hash: md5
+        md5: 3B235BA8B382E62A2355A59DD9225CEE
+        size: 4344
+    outs:
+      - path: data/processed/gurgaon_properties_cleaned_v1.csv
+        hash: md5
+        md5: E4E4A8AB3009BAE916DC4924A4DE35CD
+        size: 3843493
+
+  prepare_data_v2:
+    cmd: python .\src\features\features_engineering_v2.py .\data\processed\gurgaon_properties_cleaned_v1.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_cleaned_v1.csv
+        hash: md5
+        md5: E4E4A8AB3009BAE916DC4924A4DE35CD
+        size: 3843493
+      - path: .\src\features\features_engineering_v2.py
+        hash: md5
+        md5: E5228F8E40FE71530965559501B6CD23
+        size: 9902
+    outs:
+      - path: data/processed/gurgaon_properties_cleaned_v2.csv
+        hash: md5
+        md5: C356D87511BE99BAF8B00C8394EAA763
+        size: 626215
+
+  prepare_data_v3:
+    cmd: python .\src\data\outlier.py .\data\processed\gurgaon_properties_cleaned_v2.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_cleaned_v2.csv
+        hash: md5
+        md5: C356D87511BE99BAF8B00C8394EAA763
+        size: 626215
+      - path: .\src\data\outlier.py
+        hash: md5
+        md5: 072176D34E79C70A902F285B88ADAF1E
+        size: 3399
+    outs:
+      - path: data/processed/gurgaon_properties_outlier_treated.csv
+        hash: md5
+        md5: 99237339EE93681D9B761C240CA5C6E8
+        size: 690205
+
+  prepare_data_v4:
+    cmd: python .\src\data\missing-value-imputation.py .\data\processed\gurgaon_properties_outlier_treated.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_outlier_treated.csv
+        hash: md5
+        md5: 99237339EE93681D9B761C240CA5C6E8
+        size: 690205
+      - path: .\src\data\missing-value-imputation.py
+        hash: md5
+        md5: E7525E4E12914EC616CE4CF3B87179F9
+        size: 3516
+    outs:
+      - path: data/processed/gurgaon_properties_missing_value_imputation.csv
+        hash: md5
+        md5: C7A5E68FDC17873762D79A16CCD87813
+        size: 397531
+
+  feature_engineering:
+    cmd: python .\src\features\feature-selection.py .\data\processed\gurgaon_properties_missing_value_imputation.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_missing_value_imputation.csv
+        hash: md5
+        md5: C7A5E68FDC17873762D79A16CCD87813
+        size: 397531
+      - path: .\src\features\feature-selection.py
+        hash: md5
+        md5: D52A97D1593F716A4A98D505A8DCD309
+        size: 6881
+    outs:
+      - path: data/processed/gurgaon_properties_post_feature_selection.csv
+        hash: md5
+        md5: 14BD41CF672D500D596F7A299C529516
+        size: 161597
+
+  train_model:
+    cmd: python .\src\models\train_model.py .\data\processed\gurgaon_properties_post_feature_selection.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_post_feature_selection.csv
+        hash: md5
+        md5: 14BD41CF672D500D596F7A299C529516
+        size: 161597
+      - path: .\src\models\train_model.py
+        hash: md5
+        md5: 75CD24CB3C4A1D8A046F12422F216148
+        size: 2329
+    outs:
+      - path: models/pipeline.pkl
+        hash: md5
+        md5: 0213047E425794195A66394FF2CE952D
+        size: 146601997
+
+  visualize:
+    cmd: python .\src\visualization\data_analysis.py .\data\processed\gurgaon_properties_cleaned_v2.csv
+    deps:
+      - path: .\data\processed\gurgaon_properties_cleaned_v2.csv
+        hash: md5
+        md5: C356D87511BE99BAF8B00C8394EAA763
+        size: 626215
+      - path: .\src\visualization\data_analysis.py
+        hash: md5
+        md5: C8DC511900816146E3EA5484D565808C
+        size: 3060
+    outs:
+      - path: dvclive
+        hash: md5
+        md5: "<hash_of_dvclive>"
+        size: "<size_of_dvclive>"
+        nfiles: "<number_of_files_in_dvclive>"

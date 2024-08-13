@@ -1,0 +1,14 @@
+# local package
+-e .
+
+streamlit 
+pickle
+pandas
+numpy
+pandas
+plotly.express 
+pickle
+wordcloud
+ WordCloud
+matplotlib.pyplot 
+seaborn 
